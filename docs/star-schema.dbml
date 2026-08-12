@@ -1,0 +1,24 @@
+Table fact_accident {
+  accident_key bigint [pk, increment]
+  source_accident_id bigint [not null, unique]
+  date_key int [ref: > dim_date.date_key]
+  location_key int [ref: > dim_location.location_key]
+  road_key int [ref: > dim_road.road_key]
+  cause_key int [ref: > dim_cause.cause_key]
+  accident_type_key int [ref: > dim_accident_type.accident_type_key]
+  handling_unit_key int [ref: > dim_handling_unit.handling_unit_key]
+  people_involved int
+  deaths int
+  slightly_injured int
+  severely_injured int
+  uninjured int
+  ignored int
+  vehicles_involved int
+}
+
+Table dim_date { date_key int [pk]; full_date date; year smallint; quarter smallint; month smallint; day smallint; day_of_week varchar }
+Table dim_location { location_key int [pk, increment]; state varchar; city varchar }
+Table dim_road { road_key int [pk, increment]; road_type varchar; road_delineation varchar }
+Table dim_cause { cause_key int [pk, increment]; cause_of_accident varchar }
+Table dim_accident_type { accident_type_key int [pk, increment]; type_of_accident varchar }
+Table dim_handling_unit { handling_unit_key int [pk, increment]; regional varchar; police_station varchar }
