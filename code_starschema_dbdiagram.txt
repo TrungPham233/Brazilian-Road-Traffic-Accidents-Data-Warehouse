@@ -1,0 +1,52 @@
+Table Fact_Accident {
+  ID int [pk]
+  Date_ID int [ref: > Date_Dimension.Date_ID]
+  Location_ID int [ref: > Location_Dimension.Location_ID]
+  Road_ID int [ref: > Road_Dimension.Road_ID]
+  Cause_ID int [ref: > Cause_Dimension.Cause_ID]
+  HandlingUnit_ID int [ref: > HandlingUnit_Dimension.HandlingUnit_ID]
+  AccidentType_ID int [ref: > AccidentType_Dimension.AccidentType_ID]
+  People_Involved int
+  Deaths int
+  Slightly_Injured int
+  Severely_Injured int
+  Uninjured int
+  Ignored int
+  Vehicles_Involved int
+}
+
+Table Date_Dimension {
+  Date_ID int [pk]
+  Date_Of_Accident date
+  Year int
+  Month int
+  Day int
+}
+
+Table Location_Dimension {
+  Location_ID int [pk]
+  State varchar
+  City varchar
+}
+
+Table Road_Dimension {
+  Road_ID int [pk]
+  Road_Type varchar
+  Road_Delineation varchar
+}
+
+Table AccidentType_Dimension {
+  AccidentType_ID int [pk]
+  Type_Of_Accident varchar
+}
+
+Table Cause_Dimension {
+  Cause_ID int [pk]
+  Cause_Of_Accident varchar
+}
+
+Table HandlingUnit_Dimension {
+  HandlingUnit_ID int [pk]
+  Regional varchar
+  Police_Station varchar
+}
