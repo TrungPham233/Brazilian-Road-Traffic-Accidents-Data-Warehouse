@@ -242,7 +242,13 @@ Brazilian-Road-Traffic-Accidents-Data-Warehouse/
 **Tool:** Power BI Desktop (Power BI Project - `.pbip`)  
 **Design System:** Modern Dark-Sidebar UI Layout (`1280x720`) with dedicated `pageNavigator`, top KPI cards, and cross-visual filtering.
 
-![Dashboard Preview](docs/dashboard-preview.svg)
+### Screenshots
+
+![Executive Overview](docs/screenshots/01_executive_overview.png)
+![Geographic Hotspots](docs/screenshots/02_geographic_hotspots.png)
+![Causes & Severity](docs/screenshots/03_causes_severity.png)
+![Road & Infrastructure](docs/screenshots/04_road_infrastructure.png)
+![Time & Seasonality](docs/screenshots/05_time_seasonality.png)
 
 ### 5 Analytical Pages
 
