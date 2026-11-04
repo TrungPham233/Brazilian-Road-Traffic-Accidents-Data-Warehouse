@@ -8,4 +8,8 @@ data/processed/*.parquet
 data/processed/*.json
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+*.bak
+*.bak/
+powerbi.Report.bak/
 *.pbix
+olist_ecommerce_dashboard*

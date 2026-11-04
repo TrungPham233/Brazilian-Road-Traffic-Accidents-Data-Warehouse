@@ -1,0 +1,36 @@
+relationship 43696af1-9ae4-45fa-af3a-e3cf9f0c1c0b
+	fromColumn: Fact.AccidentType_ID
+	toColumn: AccidentType_Dimension.AccidentType_ID
+
+	annotation PBI_IsFromSource = FS
+
+relationship e7e48d8b-8deb-424d-a3e5-25ae4df501a2
+	fromColumn: Fact.Cause_ID
+	toColumn: Cause_Dimension.Cause_ID
+
+	annotation PBI_IsFromSource = FS
+
+relationship 78aaba6a-bce1-48fd-87f6-4263bb15b5c4
+	fromColumn: Fact.Date_ID
+	toColumn: Date_Dimension.Date_ID
+
+	annotation PBI_IsFromSource = FS
+
+relationship e150586a-2f1f-42ec-ac1f-da37a80a0615
+	fromColumn: Fact.HandlingUnit_ID
+	toColumn: HandlingUnit_Dimension.HandlingUnit_ID
+
+	annotation PBI_IsFromSource = FS
+
+relationship d60dce91-52aa-4159-8518-4039af4f254e
+	fromColumn: Fact.Location_ID
+	toColumn: Location_Dimension.Location_ID
+
+	annotation PBI_IsFromSource = FS
+
+relationship a2e5696b-a4de-462a-beeb-2e7ba6e536e5
+	fromColumn: Fact.Road_ID
+	toColumn: Road_Dimension.Road_ID
+
+	annotation PBI_IsFromSource = FS
+

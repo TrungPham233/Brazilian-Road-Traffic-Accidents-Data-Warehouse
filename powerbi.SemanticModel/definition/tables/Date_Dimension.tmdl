@@ -1,0 +1,65 @@
+table Date_Dimension
+	lineageTag: a9f04b70-4a76-4f6f-ab65-520ed1e2cf38
+	dataCategory: Time
+
+	column Date_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 92dc13a4-b607-418a-b0dd-a0e81c716390
+		summarizeBy: none
+		sourceColumn: Date_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Of_Accident
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 1ab22804-1406-4ae6-939e-ecf525dbaf62
+		summarizeBy: none
+		sourceColumn: Date_Of_Accident
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Day
+		dataType: int64
+		formatString: 0
+		lineageTag: f61a9a3b-46fb-494d-a3cb-279c9a12868c
+		summarizeBy: sum
+		sourceColumn: Day
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: 28777ac6-7bff-47b5-a3ce-4ca1c1b85502
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 847ec533-68fb-42ee-a6f8-3720d34b8e9b
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date_Dimension = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("ARSCIL\PHAMDUCTRUNG", "D_ACCIDENTS"),
+				    dbo_Date_Dimension = Source{[Schema="dbo",Item="Date_Dimension"]}[Data]
+				in
+				    dbo_Date_Dimension
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

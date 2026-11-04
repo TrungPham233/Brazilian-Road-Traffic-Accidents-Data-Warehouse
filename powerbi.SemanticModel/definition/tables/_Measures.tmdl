@@ -1,0 +1,137 @@
+table _Measures
+	lineageTag: 3528f741-37e9-47cb-976b-00440e689650
+
+	measure Accidents = COUNTROWS('Fact')
+		formatString: 0
+		lineageTag: cf5c901d-2cfb-4979-9f56-f03e4920c26e
+
+	measure Deaths = SUM('Fact'[deaths])
+		formatString: 0
+		lineageTag: 031ba089-6b55-4154-be05-1eab983fc074
+
+	measure 'Severe Injuries' = SUM('Fact'[severely_injured])
+		formatString: 0
+		lineageTag: 4058c2f1-0096-4bc4-8bc4-5edf6745743d
+
+	measure 'Fatal Accidents' = CALCULATE([Accidents], 'Fact'[deaths] > 0)
+		formatString: 0
+		lineageTag: c0a4aaee-4f4f-4b4d-83df-32425e254b97
+
+	measure 'Fatal Accident Rate' = DIVIDE([Fatal Accidents], [Accidents])
+		lineageTag: b01579db-db08-4591-b9a4-3a0bed478f50
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Deaths per 100 Accidents' = DIVIDE([Deaths], [Accidents]) * 100
+		lineageTag: 5798e15f-c508-4be5-b440-257ae5c68e13
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Deaths per 100 (Min Sample)' =
+			
+			IF([Accidents] >= 100, [Deaths per 100 Accidents])
+		lineageTag: 2f5c0965-1b77-49d5-930c-732d9b19b316
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Top Type Rate' =
+			
+			MAXX(
+			    VALUES('AccidentType_Dimension'[Type_Of_Accident]),
+			    [Deaths per 100 (Min Sample)]
+			)
+		lineageTag: 6a36077a-2a53-4e8e-a1da-b395dcb19c67
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Top Type' =
+			
+			VAR topRow =
+			    TOPN(
+			        1,
+			        VALUES('AccidentType_Dimension'[Type_Of_Accident]),
+			        [Deaths per 100 (Min Sample)], DESC
+			    )
+			RETURN
+			    MAXX(topRow, 'AccidentType_Dimension'[Type_Of_Accident])
+		lineageTag: 791f00d4-a630-41fd-9409-92d5d8de31c3
+
+	measure 'Top Type Detail' =
+			
+			VAR t =
+			    TOPN(
+			        1,
+			        VALUES('AccidentType_Dimension'[Type_Of_Accident]),
+			        [Deaths per 100 (Min Sample)], DESC
+			    )
+			VAR d = CALCULATE([Deaths], t)
+			VAR a = CALCULATE([Accidents], t)
+			RETURN
+			    IF(
+			        ISBLANK(a),
+			        "No data",
+			        FORMAT(d, "#,0") & " deaths across " & FORMAT(a, "#,0") & " accidents"
+			    )
+		lineageTag: 62bc9429-a7fd-4e6d-b0d1-f9d23bde4f47
+
+	measure 'State Label' =
+			
+			FORMAT([Deaths], "#,0") & " deaths · "
+			    & FORMAT([Deaths per 100 Accidents], "0.00") & "/100"
+		lineageTag: 9088a280-3d6b-48c0-a9c6-7dfd57fdeb97
+
+
+	measure 'Total People Involved' = SUM('Fact'[people_involved])
+		formatString: #,0
+		lineageTag: f5c1ac23-58bc-49a7-95c0-6a09b58ace26
+
+	measure 'Total Vehicles' = SUM('Fact'[vehicles_involved])
+		formatString: #,0
+		lineageTag: f7c756e9-1fa3-4e3b-8d2a-35043d8e4826
+
+	measure 'Slight Injuries' = SUM('Fact'[slightly_injured])
+		formatString: #,0
+		lineageTag: 73d9a242-975d-424e-a8bf-e7f8f3e17712
+
+	measure 'Uninjured' = SUM('Fact'[uninjured])
+		formatString: #,0
+		lineageTag: dd856548-20f2-464b-a16c-8ec377177bc5
+
+	measure 'Deaths on Dupla' = CALCULATE([Deaths], 'Road_Dimension'[Road_Type] = "Dupla")
+		formatString: #,0
+		lineageTag: 860b9820-36b8-4480-becd-cff74e958045
+
+	measure 'Deaths on Simples' = CALCULATE([Deaths], 'Road_Dimension'[Road_Type] = "Simples")
+		formatString: #,0
+		lineageTag: 5e68a73b-5ade-4074-9672-7b2e917ba579
+
+	measure 'Accidents on Curva' = CALCULATE([Accidents], 'Road_Dimension'[Road_Delineation] = "Curva")
+		formatString: #,0
+		lineageTag: 1e2f25cd-2c87-4d0d-bbd1-20895bde545b
+
+	measure 'Accidents on Reta' = CALCULATE([Accidents], 'Road_Dimension'[Road_Delineation] = "Reta")
+		formatString: #,0
+		lineageTag: d350f90a-6ef9-485a-93aa-1070c1a0e219
+
+	column Column1
+		dataType: string
+		isHidden
+		lineageTag: 1343c409-1f27-4f53-ba22-cb11c76427c6
+		summarizeBy: none
+		sourceColumn: Column1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

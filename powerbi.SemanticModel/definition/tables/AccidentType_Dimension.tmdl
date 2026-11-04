@@ -1,0 +1,33 @@
+table AccidentType_Dimension
+	lineageTag: de21e34c-f05b-4769-bc75-4377472d31ca
+
+	column AccidentType_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 416cc526-1954-4a48-bcab-bf85cf341ea5
+		summarizeBy: none
+		sourceColumn: AccidentType_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Of_Accident
+		dataType: string
+		lineageTag: 6719ebca-13b3-41e6-b297-a67359ddc652
+		summarizeBy: none
+		sourceColumn: Type_Of_Accident
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AccidentType_Dimension = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("ARSCIL\PHAMDUCTRUNG", "D_ACCIDENTS"),
+				    dbo_AccidentType_Dimension = Source{[Schema="dbo",Item="AccidentType_Dimension"]}[Data]
+				in
+				    dbo_AccidentType_Dimension
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

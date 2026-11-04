@@ -1,0 +1,41 @@
+table Road_Dimension
+	lineageTag: a4443779-ab48-4cd1-8dae-898f9b12c1cd
+
+	column Road_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 6ed94e98-a69c-4c78-9b95-57b1e5d6e5b9
+		summarizeBy: none
+		sourceColumn: Road_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Road_Type
+		dataType: string
+		lineageTag: 993e005c-744d-49b6-beeb-7deccfcd4811
+		summarizeBy: none
+		sourceColumn: Road_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Road_Delineation
+		dataType: string
+		lineageTag: 413bb0d4-6942-499d-8857-b69a1d3336e6
+		summarizeBy: none
+		sourceColumn: Road_Delineation
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Road_Dimension = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("ARSCIL\PHAMDUCTRUNG", "D_ACCIDENTS"),
+				    dbo_Road_Dimension = Source{[Schema="dbo",Item="Road_Dimension"]}[Data]
+				in
+				    dbo_Road_Dimension
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

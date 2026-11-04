@@ -1,0 +1,41 @@
+table Location_Dimension
+	lineageTag: e71e15d5-b0ec-4927-b289-b7f0924c0ce6
+
+	column Location_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 8ea2eda9-795f-40f7-b09e-87d661cd2a6b
+		summarizeBy: none
+		sourceColumn: Location_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		lineageTag: a622d35c-062c-498f-8d62-98e6543e6b24
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 3646458a-3372-44bd-b353-345576401d19
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Location_Dimension = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("ARSCIL\PHAMDUCTRUNG", "D_ACCIDENTS"),
+				    dbo_Location_Dimension = Source{[Schema="dbo",Item="Location_Dimension"]}[Data]
+				in
+				    dbo_Location_Dimension
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

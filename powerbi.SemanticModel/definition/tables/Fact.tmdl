@@ -1,0 +1,142 @@
+table Fact
+	lineageTag: ebce462f-43d2-43b6-9f2d-53a097fe2f5c
+
+	column Id
+		dataType: int64
+		formatString: 0
+		lineageTag: 6343a362-2bd3-4941-a28d-c87ab1d8ca44
+		summarizeBy: count
+		sourceColumn: Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 3a69dd40-62e3-4a59-8b77-033cc907220b
+		summarizeBy: none
+		sourceColumn: Date_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 59c71105-d7be-42e4-9100-b338bdf5cef1
+		summarizeBy: none
+		sourceColumn: Location_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Road_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 4c4105d2-4442-4230-836a-bda0ad43d713
+		summarizeBy: none
+		sourceColumn: Road_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cause_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: fcda3e2c-2023-42a4-9141-8ea5f3e3206c
+		summarizeBy: none
+		sourceColumn: Cause_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column HandlingUnit_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: ccf2abdc-e735-4f9e-ad13-6ac4d97e3b05
+		summarizeBy: none
+		sourceColumn: HandlingUnit_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccidentType_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 58244bb1-ef57-4d3e-8a54-2650fac85ca9
+		summarizeBy: none
+		sourceColumn: AccidentType_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column people_involved
+		dataType: int64
+		formatString: 0
+		lineageTag: b20e437f-6425-45dd-bcbf-8209b76fffd0
+		summarizeBy: sum
+		sourceColumn: people_involved
+
+		annotation SummarizationSetBy = Automatic
+
+	column deaths
+		dataType: int64
+		formatString: 0
+		lineageTag: ca5bdf87-889a-4277-b22a-cb0289038f90
+		summarizeBy: sum
+		sourceColumn: deaths
+
+		annotation SummarizationSetBy = Automatic
+
+	column slightly_injured
+		dataType: int64
+		formatString: 0
+		lineageTag: 8a335f9e-586d-4132-9c54-b023a4c91f1b
+		summarizeBy: sum
+		sourceColumn: slightly_injured
+
+		annotation SummarizationSetBy = Automatic
+
+	column severely_injured
+		dataType: int64
+		formatString: 0
+		lineageTag: ff84a138-5584-44be-8fe5-879d140ce3f8
+		summarizeBy: sum
+		sourceColumn: severely_injured
+
+		annotation SummarizationSetBy = Automatic
+
+	column uninjured
+		dataType: int64
+		formatString: 0
+		lineageTag: 918f194c-c179-4eec-b62d-e2b94d3b3edc
+		summarizeBy: sum
+		sourceColumn: uninjured
+
+		annotation SummarizationSetBy = Automatic
+
+	column ignored
+		dataType: int64
+		formatString: 0
+		lineageTag: 88af2a71-a7f6-4c40-88f2-e1c83ed65116
+		summarizeBy: sum
+		sourceColumn: ignored
+
+		annotation SummarizationSetBy = Automatic
+
+	column vehicles_involved
+		dataType: int64
+		formatString: 0
+		lineageTag: f0aeaee6-1ac0-4214-8498-6c6716e50906
+		summarizeBy: sum
+		sourceColumn: vehicles_involved
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("ARSCIL\PHAMDUCTRUNG", "D_ACCIDENTS"),
+				    dbo_Fact = Source{[Schema="dbo",Item="Fact"]}[Data]
+				in
+				    dbo_Fact
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

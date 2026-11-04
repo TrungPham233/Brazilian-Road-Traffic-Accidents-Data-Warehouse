@@ -1,0 +1,26 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["AccidentType_Dimension","Cause_Dimension","Date_Dimension","Fact","HandlingUnit_Dimension","Location_Dimension","Road_Dimension","_Measures"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table AccidentType_Dimension
+ref table Cause_Dimension
+ref table Date_Dimension
+ref table Fact
+ref table HandlingUnit_Dimension
+ref table Location_Dimension
+ref table Road_Dimension
+ref table _Measures
+
+ref cultureInfo en-US
+

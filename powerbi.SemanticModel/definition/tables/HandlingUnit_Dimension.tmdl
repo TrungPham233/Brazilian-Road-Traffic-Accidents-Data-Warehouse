@@ -1,0 +1,39 @@
+table HandlingUnit_Dimension
+	lineageTag: 3b88ff70-5375-44e8-b6aa-bc29c6e4cc22
+
+	column HandlingUnit_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 4f9fe500-2798-41e2-b77a-e3e2241e60bb
+		summarizeBy: none
+		sourceColumn: HandlingUnit_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Regional
+		dataType: string
+		lineageTag: 5c9a4831-971a-4761-a02b-2b11813f0a06
+		summarizeBy: none
+		sourceColumn: Regional
+
+		annotation SummarizationSetBy = Automatic
+
+	column Police_Station
+		dataType: string
+		lineageTag: 700d80bd-c2c9-4c39-a0bd-d51c37eece65
+		summarizeBy: none
+		sourceColumn: Police_Station
+
+		annotation SummarizationSetBy = Automatic
+
+	partition HandlingUnit_Dimension = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("ARSCIL\PHAMDUCTRUNG", "D_ACCIDENTS"),
+				    dbo_HandlingUnit_Dimension = Source{[Schema="dbo",Item="HandlingUnit_Dimension"]}[Data]
+				in
+				    dbo_HandlingUnit_Dimension
+
+	annotation PBI_ResultType = Table
+

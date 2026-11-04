@@ -1,0 +1,33 @@
+table Cause_Dimension
+	lineageTag: b9ccb0f1-d084-4a50-9de8-3fa2e4742eae
+
+	column Cause_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 6f25c292-0a64-446f-87d3-b3ca2f746875
+		summarizeBy: none
+		sourceColumn: Cause_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cause_Of_Accident
+		dataType: string
+		lineageTag: c964ff46-16a3-4864-8022-06b63d8d7a8e
+		summarizeBy: none
+		sourceColumn: Cause_Of_Accident
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Cause_Dimension = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("ARSCIL\PHAMDUCTRUNG", "D_ACCIDENTS"),
+				    dbo_Cause_Dimension = Source{[Schema="dbo",Item="Cause_Dimension"]}[Data]
+				in
+				    dbo_Cause_Dimension
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
