@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- Brazilian Road Accident Intelligence — Data Warehouse Quality Assertions
--- Runs 15 verification checks on the star schema in PostgreSQL
+-- Runs 11 verification checks on the star schema in PostgreSQL
 -- ==============================================================================
 
 -- 1. Fact table completeness (Must not be empty)

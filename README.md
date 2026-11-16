@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15%2B-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Power BI](https://img.shields.io/badge/Power_BI-Desktop_%26_PBIP-F2C811?logo=powerbi&logoColor=black)](https://powerbi.microsoft.com/)
-[![Data Quality](https://img.shields.io/badge/Data_Quality-100%25_PASS-success)](data/processed/quality_report.json)
+[![Data Quality](https://img.shields.io/badge/SQL_checks-11%2F11_PASS-success)](sql/04_data_quality_checks.sql)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
@@ -21,6 +21,8 @@ Governmental bodies, road concessionaires, and public-safety directors face crit
 
 This project delivers an **end-to-end analytics engineering platform**: from source profiling, reproducible Python ETL, Kimball star-schema data warehouse modeling in PostgreSQL, automated quality assertions, to an interactive **5-page Power BI executive dashboard**.
 
+> **Project history:** this started as a two-person course project (*Data Warehouse & OLAP*, UIT) built on the Microsoft stack: **SQL Server** warehouse loaded with **SSIS**, an **SSAS** cube queried with MDX, and Power BI. The Power BI report in this repo (`powerbi.SemanticModel`) still reads that SQL Server warehouse. The Python ETL and SQL scripts here are an open re-implementation of the same star schema on **PostgreSQL**, so the pipeline can be reproduced without SQL Server.
+
 ---
 
 ## Architecture
@@ -28,11 +30,12 @@ This project delivers an **end-to-end analytics engineering platform**: from sou
 ```mermaid
 flowchart LR
     A["Raw PRF CSVs\n(2017–2023)"] --> B["Python ETL Pipeline\nstandardize • validate • deduplicate"]
-    B --> C["Data Quality Gate\n15 Automated Assertions"]
+    B --> C["Pre-load Quality Report\nrejected rows • duplicates • nulls • negatives"]
     C --> D["Staging Extract\nParquet & Clean CSV"]
     D --> E["PostgreSQL Data Warehouse\nStar Schema (1 Fact + 6 Dimensions)"]
     E --> F["Analytical SQL Marts\nRisk Ranks • Hotspots • Seasonality"]
-    E --> G["Power BI Dashboard\n5 Analytical Pages • PBIP Project"]
+    E --> H["Post-load SQL Checks\n11 assertions"]
+    E --> G["Power BI Dashboard\n5 pages • 19 DAX measures • PBIP"]
 ```
 
 ---
@@ -88,22 +91,37 @@ All measures are standardized across both SQL queries and DAX formulations:
 ## ETL Pipeline & Quality Assurance
 
 ### Technology Stack
-- **Python 3.10+** — `pandas`, `pyarrow`, `SQLAlchemy`, `psycopg2`
-- **PostgreSQL 15+** — Star Schema warehouse storage
-- **Power BI Desktop** — Multi-page Fabric PBIP analytical reporting
+- **Python 3.10+** — `pandas`, `pyarrow` (ETL and quality report)
+- **PostgreSQL 15+** — Star Schema warehouse storage (loaded with `psql \copy`)
+- **SQL Server + SSIS + SSAS** — course version of the same warehouse (source of the Power BI report)
+- **Power BI Desktop** — 5-page PBIP report, 19 DAX measures
 
-### Automated Data Quality Checks (15 Assertions)
+### Data Quality Checks
 
-The pipeline executes pre-load validations ([`src/quality.py`](src/quality.py)) and post-load SQL assertions ([`sql/04_data_quality_checks.sql`](sql/04_data_quality_checks.sql)):
+Quality is checked in three places:
 
-| Category | Assertions | Criteria | Status |
-|---|---|---|---|
-| **Completeness** | 2 | Fact row count $> 400,000$; dimensions populated | **PASS** |
-| **Nullability** | 7 | Foreign keys in `fact_accident` must be `NOT NULL` | **PASS** |
-| **Validity** | 2 | Measures $\ge 0$ (`deaths`, `injuries`, `people`, `vehicles`) | **PASS** |
-| **Uniqueness** | 1 | No duplicate natural accident incidents | **PASS** |
-| **Referential Integrity** | 2 | Zero orphaned foreign keys across all 6 conformed dimensions | **PASS** |
-| **Range & Coverage** | 1 | Date span covers 2017-01-01 through 2023-08-31; all 27 Brazilian states present | **PASS** |
+**1. Pre-load report** – [`src/quality.py`](src/quality.py) writes `data/processed/quality_report.json` on every ETL run:
+
+| Indicator | Latest run |
+|---|---|
+| Source rows / accepted rows | 463,152 / 462,478 (**99.85%** kept) |
+| Rejected rows (missing date, state or city) | 674 |
+| Duplicate accident rows | 0 |
+| Nulls in warehouse columns | 0 |
+| Rows with negative measures | 0 |
+
+**2. Post-load SQL assertions** – [`sql/04_data_quality_checks.sql`](sql/04_data_quality_checks.sql), **11 checks**, each returning PASS/FAIL:
+
+| # | Check |
+|---|---|
+| 1 | Fact table is not empty (> 400,000 rows) |
+| 2 | No NULL foreign key in `fact_accident` (all 6 keys in one check) |
+| 3 | No negative measure (deaths, injuries, people, vehicles) |
+| 4–9 | Referential integrity: zero orphaned rows against each of the 6 dimensions |
+| 10 | Date coverage 2017-01-01 → 2023-08-31 |
+| 11 | All 27 Brazilian states present |
+
+**3. Database constraints** – [`sql/01_create_warehouse.sql`](sql/01_create_warehouse.sql): `NOT NULL` and `FOREIGN KEY` on every fact key, `CHECK (>= 0)` on every measure, `UNIQUE (source_accident_id)` against duplicate incidents.
 
 ---
 
@@ -112,7 +130,7 @@ The pipeline executes pre-load validations ([`src/quality.py`](src/quality.py)) 
 ### Prerequisites
 - Python 3.10+
 - PostgreSQL 15+ (Local or Docker)
-- Microsoft Power BI Desktop (for opening the `.pbip` / `.pbix` report)
+- Microsoft Power BI Desktop (for opening the `.pbip` report)
 
 ### 1. Clone & Setup Environment
 
@@ -194,14 +212,13 @@ Brazilian-Road-Traffic-Accidents-Data-Warehouse/
 │   ├── 01_create_warehouse.sql         # PostgreSQL DDL for Star Schema
 │   ├── 02_load_warehouse.sql           # Data ingestion & staging load script
 │   ├── 03_analytics_queries.sql        # High-impact business analytical queries
-│   └── 04_data_quality_checks.sql      # 15 automated database quality assertions
+│   └── 04_data_quality_checks.sql      # 11 post-load quality assertions
 ├── src/
 │   ├── etl.py                          # End-to-end extraction and cleansing pipeline
 │   ├── quality.py                      # Data validation and quality reporter
 │   └── build_dashboard_preview.py      # Standalone SVG dashboard visualizer
 ├── anh_diagram.png                     # Star schema architecture visual
 ├── powerbi.pbip                        # Main Power BI Project file
-├── powerbi.pbix                        # Packaged Power BI workbook
 ├── requirements.txt                    # Python environment dependencies
 └── README.md
 ```
