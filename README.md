@@ -15,7 +15,7 @@
 Brazil's federal highway system spans over 73,000 kilometers of high-speed roads, serving as the backbone for freight logistics and passenger transit. Every year, tens of thousands of severe incidents occur, producing complex operational reports recorded by the **Polícia Rodoviária Federal (PRF)**.
 
 Governmental bodies, road concessionaires, and public-safety directors face critical operational challenges:
-- **Raw Log Chaos:** Source records contain millions of raw incident lines with irregular text encodings, inconsistent city naming, and mixed numeric indicators.
+- **Raw Log Chaos:** Source records contain millions of raw incident lines with blank and inconsistently spaced text fields, missing attributes, and non-numeric values in count columns.
 - **Volume vs. Lethality Bias:** High accident count alone is a misleading metric — areas with moderate volume often suffer disproportionately higher fatality rates due to severe road geometry or head-on collisions.
 - **Lack of Centralized Analytics:** Stakeholders lack an integrated, drillable data platform to answer **where**, **when**, and **why** fatal traffic accidents occur.
 
@@ -248,8 +248,10 @@ Brazilian-Road-Traffic-Accidents-Data-Warehouse/
 
 | Anomaly Identified | Occurrences | Engineering Resolution |
 |---|---|---|
-| **Diacritic Inconsistencies** | Thousands | Unicode normalization (`NFKD`) to ASCII to reconcile city and cause spellings |
-| **Missing Road Attributes** | 674 rows | Mapped to explicit surrogate `Unknown` rather than dropping fact rows |
+| **Missing date, state or city** | 674 rows (0.15%) | Rejected, since these define the grain and the core analysis |
+| **Missing descriptive attributes** (road type, cause, police unit…) | Varies by column | Mapped to an explicit `Unknown` member instead of dropping the accident |
+| **Messy text values** (extra spaces, empty strings) | Varies by column | Trimmed; empty strings treated as missing |
+| **Non-numeric or negative counts** | Varies by column | Converted to numbers, invalid values set to 0 |
 | **High Exposure vs High Risk** | Systemic | Implemented `Deaths per 100 Accidents` with sample threshold ($\ge 100$) to eliminate small-sample noise |
 
 ---
