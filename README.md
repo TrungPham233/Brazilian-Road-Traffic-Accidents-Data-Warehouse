@@ -15,7 +15,7 @@
 Brazil's federal highway system spans over 73,000 kilometers of high-speed roads, serving as the backbone for freight logistics and passenger transit. Every year, tens of thousands of severe incidents occur, producing complex operational reports recorded by the **Polícia Rodoviária Federal (PRF)**.
 
 Governmental bodies, road concessionaires, and public-safety directors face critical operational challenges:
-- **Raw Log Chaos:** The 463,152 raw incident records contain with blank and inconsistently spaced text fields, missing attributes, and non-numeric values in count columns.
+- **Raw Log Chaos:** The 463,152 raw incident records contain blank and inconsistently spaced text fields, missing attributes, and non-numeric values in count columns.
 - **Volume vs. Lethality Bias:** High accident count alone is a misleading metric — areas with moderate volume often suffer disproportionately higher fatality rates due to severe road geometry or head-on collisions.
 - **Lack of Centralized Analytics:** Stakeholders lack an integrated, drillable data platform to answer **where**, **when**, and **why** fatal traffic accidents occur.
 
